@@ -239,7 +239,6 @@ func newMetrics(r prometheus.Registerer) *metrics {
 	}
 	for _, integration := range []string{
 		"email",
-		"hipchat",
 		"pagerduty",
 		"wechat",
 		"pushover",
@@ -634,16 +633,18 @@ func (r RetryStage) Exec(ctx context.Context, l log.Logger, alerts ...*types.Ale
 		sent = alerts
 	}
 
+	b := backoff.NewExponentialBackOff()
+	b.MaxElapsedTime = 0 // Always retry.
+
+	tick := backoff.NewTicker(b)
+	defer tick.Stop()
+
 	var (
 		i    = 0
-		b    = backoff.NewExponentialBackOff()
+
 		iErr error
 	)
 
-	// always retry until next flush
-	b.MaxElapsedTime = 0
-	tick := backoff.NewTicker(b)
-	defer tick.Stop()
 	l = log.With(l, "receiver", r.groupName, "integration", r.integration.String())
 
 	for {
