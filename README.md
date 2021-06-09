@@ -20,7 +20,13 @@ is the recommended way of installing Alertmanager.
 
 ### Docker images
 
-Docker images are available on [Quay.io](https://quay.io/repository/prometheus/alertmanager).
+Docker images are available on [Quay.io](https://quay.io/repository/prometheus/alertmanager) or [Docker Hub](https://hub.docker.com/r/prom/alertmanager/).
+
+You can launch an Alertmanager container for trying it out with
+
+    $ docker run --name alertmanager -d -p 127.0.0.1:9093:9093 quay.io/prometheus/alertmanager
+
+Alertmanager will now be reachable at http://localhost:9093/.
 
 ### Compiling the binary
 
@@ -277,7 +283,7 @@ $ amtool silence query instance=~".+0"
 ID                                    Matchers                            Ends At                  Created By  Comment
 e48cb58a-0b17-49ba-b734-3585139b1d25  alertname=Test_Alert instance=~.+0  2017-08-02 22:41:39 UTC  kellel
 
-$ amtool silence expire $(amtool silence -q query instance=~".+0")
+$ amtool silence expire $(amtool silence query -q instance=~".+0")
 
 $ amtool silence query instance=~".+0"
 
